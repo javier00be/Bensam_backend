@@ -6,6 +6,10 @@ const cors = require("cors");
 const connectDB = require('./db');
 const app = express();
 
+const modeloRoutes = require('./routes/modeloRoutes');
+const disenoRoutes = require('./routes/disenoRoutes');
+const telaRoutes = require('./routes/telaRoutes');
+
 // Configuración de middlewares
 app.use(cors({ origin: "*" }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,10 +32,12 @@ app.get('/api', (req, res) => {
     res.json({ message: 'API REST funcionando correctamente' });
 });
 
-// Aquí definirías tus rutas
-// app.use('/api/usuarios', usuarioRoutes);
-// app.use('/api/productos', productoRoutes);
-// etc.
+app.use('/api/modelo', modeloRoutes);
+app.use('/api/diseno', disenoRoutes);
+app.use('/api/tela', telaRoutes);
+
+
+
 
 const port = process.env.PORT || 4000;
 
