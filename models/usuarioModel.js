@@ -4,13 +4,11 @@ let Schema = mongoose.Schema;
 
 //Cambia tipo usuario de acuerdo sea (admin o usuario)
 let UsuarioSchema = new Schema({
-    nombre: {
-        type: String,
-        required: true
-    },
-    apellidos: {
-        type: String,
-        required: true
+    documento_identidad:
+    {
+        type: Number,
+        required: true,
+        unique: true
     },
     email: {
         type: String,
