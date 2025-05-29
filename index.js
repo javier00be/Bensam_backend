@@ -9,6 +9,8 @@ const app = express();
 const modeloRoutes = require('./routes/modeloRoutes');
 const disenoRoutes = require('./routes/disenoRoutes');
 const telaRoutes = require('./routes/telaRoutes');
+const almacenRoutes = require('./routes/almacenRoutes');
+const tallaRoutes = require('./routes/tallaRoutes');
 
 // Configuración de middlewares
 app.use(cors({ origin: "*" }));
@@ -35,6 +37,8 @@ app.get('/api', (req, res) => {
 app.use('/api/modelo', modeloRoutes);
 app.use('/api/diseno', disenoRoutes);
 app.use('/api/tela', telaRoutes);
+app.use('/api/almacen', almacenRoutes);
+app.use('/api/talla', tallaRoutes);
 
 
 

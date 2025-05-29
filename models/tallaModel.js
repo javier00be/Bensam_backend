@@ -5,7 +5,7 @@ const TallaSchema = new Schema({
     size: {
     type: String,
     required: true,
-    enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] // Optional: Restrict allowed sizes
+    enum: ['2', '4', '6', '8', '10', '12', '14', '16', 'XS', 'S', 'M', 'L', 'XL', 'XXL'] // Optional: Restrict allowed sizes
   },
   quantity: {
     type: Number,
