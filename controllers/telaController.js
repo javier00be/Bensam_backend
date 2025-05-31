@@ -37,7 +37,21 @@ async function crearTela(req, res) {
 async function obtenerTelas(req, res) {
   try {
     const telas = await Tela.find();
-    res.status(200).json(telas);
+
+    // Transform the data to combine 'diseno' and 'color'
+    const telasTransformadas = telas.map(tela => {
+      return {
+        _id: tela._id,
+        disenoColor: `${tela.diseno}-${tela.color}`, // Combined field
+        createdAt: tela.createdAt,
+        updatedAt: tela.updatedAt,
+        __v: tela.__v,
+        // Include other fields if necessary, e.g.,
+        // someOtherField: tela.someOtherField
+      };
+    });
+
+    res.status(200).json(telasTransformadas);
   } catch (error) {
     console.error("Error al obtener las telas:", error);
     res.status(500).json({ message: "Error al obtener las telas" });
