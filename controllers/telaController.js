@@ -7,7 +7,9 @@ async function crearTela(req, res) {
 
     // Validar que diseno y color sean solo números
     if (!/^\d+$/.test(diseno) || !/^\d+$/.test(color)) {
-      return res.status(400).json({ message: "Diseño y color deben contener solo números" });
+      return res
+        .status(400)
+        .json({ message: "Diseño y color deben contener solo números" });
     }
 
     // Formatear los campos
@@ -15,7 +17,10 @@ async function crearTela(req, res) {
     const colorFormateado = `C${color}`;
 
     // Verificar si ya existe una tela con los mismos valores
-    const telaExistente = await Tela.findOne({ diseno: disenoFormateado, color: colorFormateado });
+    const telaExistente = await Tela.findOne({
+      diseno: disenoFormateado,
+      color: colorFormateado,
+    });
     if (telaExistente) {
       return res.status(400).json({ message: "La tela ya existe" });
     }
@@ -39,7 +44,7 @@ async function obtenerTelas(req, res) {
     const telas = await Tela.find();
 
     // Transform the data to combine 'diseno' and 'color'
-    const telasTransformadas = telas.map(tela => {
+    const telasTransformadas = telas.map((tela) => {
       return {
         _id: tela._id,
         disenoColor: `${tela.diseno}-${tela.color}`, // Combined field
@@ -58,20 +63,45 @@ async function obtenerTelas(req, res) {
   }
 }
 
+
+async function obtenerTelaSeparada(req, res) {
+  try {
+    const telas = await Tela.find();
+
+    // Transform the data to combine 'diseno' and 'color'
+    const telasTransformadas = telas.map((tela) => {
+      return {
+        _id: tela._id,
+        diseno:tela.diseno,
+        color: tela.color,
+        createdAt: tela.createdAt,
+        updatedAt: tela.updatedAt,
+        __v: tela.__v,
+        // Include other fields if necessary, e.g.,
+        // someOtherField: tela.someOtherField
+      };
+    });
+
+    res.status(200).json(telasTransformadas);
+  } catch (error) {
+    console.error("Error al obtener las telas:", error);
+    res.status(500).json({ message: "Error al obtener las telas" });
+  }
+}
+
+
 async function obtenerTelaPorId(req, res) {
   try {
     const { id } = req.params;
-    const tela = await
-        Tela.findById(id);
+    const tela = await Tela.findById(id);
     if (!tela) {
-        return res.status(404).json({ message: "Tela no encontrada" });
-        }
+      return res.status(404).json({ message: "Tela no encontrada" });
+    }
     res.status(200).json(tela);
-    }
-    catch (error) {
-        console.error("Error al obtener la tela:", error);
-        res.status(500).json({ message: "Error al obtener la tela" });
-    }
+  } catch (error) {
+    console.error("Error al obtener la tela:", error);
+    res.status(500).json({ message: "Error al obtener la tela" });
+  }
 }
 
 async function actualizarTela(req, res) {
@@ -81,7 +111,9 @@ async function actualizarTela(req, res) {
 
     // Validar que diseno y color sean solo números
     if (!/^\d+$/.test(diseno) || !/^\d+$/.test(color)) {
-      return res.status(400).json({ message: "Diseño y color deben contener solo números" });
+      return res
+        .status(400)
+        .json({ message: "Diseño y color deben contener solo números" });
     }
 
     // Formatear los campos
@@ -99,7 +131,9 @@ async function actualizarTela(req, res) {
       return res.status(404).json({ message: "Tela no encontrada" });
     }
 
-    res.status(200).json({ message: "Tela actualizada correctamente", telaActualizada });
+    res
+      .status(200)
+      .json({ message: "Tela actualizada correctamente", telaActualizada });
   } catch (error) {
     console.error("Error al actualizar la tela:", error);
     res.status(500).json({ message: "Error al actualizar la tela" });
@@ -120,13 +154,11 @@ async function eliminarTela(req, res) {
   }
 }
 
-
-
-
 module.exports = {
   crearTela,
   obtenerTelas,
   obtenerTelaPorId,
   actualizarTela,
-  eliminarTela
+  eliminarTela,
+  obtenerTelaSeparada
 };

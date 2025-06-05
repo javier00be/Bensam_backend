@@ -12,6 +12,10 @@ const telaRoutes = require('./routes/telaRoutes');
 const almacenRoutes = require('./routes/almacenRoutes');
 const tallaRoutes = require('./routes/tallaRoutes');
 
+const categoriaRoutes = require('./routes/categoriaRoutes');
+
+
+
 // Configuración de middlewares
 app.use(cors({ origin: "*" }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -39,6 +43,10 @@ app.use('/api/diseno', disenoRoutes);
 app.use('/api/tela', telaRoutes);
 app.use('/api/almacen', almacenRoutes);
 app.use('/api/talla', tallaRoutes);
+
+app.use('/api/categoria', categoriaRoutes);
+
+
 
 
 
