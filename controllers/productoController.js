@@ -1,69 +1,113 @@
 const Producto = require('../models/productoModel');
+const cloudinary = require('cloudinary').v2;
 
-// Create a new product
-async function createProducto(req, res) {
+// Crear un nuevo producto con imagen
+async function crearProducto(req, res) {
   try {
-    const producto = new Producto(req.body);
+    let imageUrl = null;
+    
+    // Si hay un archivo de imagen, subirlo a Cloudinary
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      
+      const result = await cloudinary.uploader.upload(dataURI, {
+        folder: 'bensam_products'
+      });
+      
+      imageUrl = result.secure_url;
+    }
+    
+    // Crear el objeto del producto incluyendo la URL de la imagen
+    const productoData = {
+      ...req.body,
+      imagen: imageUrl // Asegúrate de que tu modelo tenga un campo 'imagen'
+    };
+    
+    const producto = new Producto(productoData);
     await producto.save();
+    
     res.status(201).json(producto);
   } catch (err) {
+    console.error('Error al crear producto:', err);
     res.status(400).json({ message: err.message });
   }
-};
+}
 
-// Get all products
-async function getAllProductos(req, res) {
+// Actualizar un producto con posible nueva imagen
+async function actualizarProducto(req, res) {
+  try {
+    let updateData = { ...req.body };
+    
+    // Si hay un archivo de imagen, subirlo a Cloudinary
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      
+      const result = await cloudinary.uploader.upload(dataURI, {
+        folder: 'bensam_products'
+      });
+      
+      updateData.imagen = result.secure_url;
+    }
+    
+    const producto = await Producto.findByIdAndUpdate(
+      req.params.id, 
+      updateData, 
+      { new: true }
+    ).populate('modelo diseno tela categoria');
+    
+    if (!producto) {
+      return res.status(404).json({ message: 'Producto no encontrado' });
+    }
+    
+    res.json(producto);
+  } catch (err) {
+    console.error('Error al actualizar producto:', err);
+    res.status(400).json({ message: err.message });
+  }
+}
+
+// Obtener todos los productos
+async function obtenerTodosProductos(req, res) {
   try {
     const productos = await Producto.find().populate('modelo diseno tela categoria');
     res.json(productos);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+}
 
-// Get a single product by ID
-async function getProductoById(req, res) {
+// Obtener un solo producto por ID
+async function obtenerProductoPorId(req, res) {
   try {
     const producto = await Producto.findById(req.params.id).populate('modelo diseno tela categoria');
     if (!producto) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: 'Producto no encontrado' });
     }
     res.json(producto);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+}
 
-// Update a product by ID
-async function updateProducto(req, res) {
-  try {
-    const producto = await Producto.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('modelo diseno tela categoria');
-    if (!producto) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    res.json(producto);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-// Delete a product by ID
-async function deleteProducto(req, res) {
+// Eliminar un producto por ID
+async function eliminarProducto(req, res) {
   try {
     const producto = await Producto.findByIdAndDelete(req.params.id);
     if (!producto) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: 'Producto no encontrado' });
     }
-    res.json({ message: 'Product deleted' });
+    res.json({ message: 'Producto eliminado exitosamente' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+}
 
 module.exports = {
-  createProducto,
-  getAllProductos,
-  getProductoById,
-  updateProducto,
-  deleteProducto
+  crearProducto,
+  obtenerTodosProductos,
+  obtenerProductoPorId,
+  actualizarProducto,
+  eliminarProducto
 };

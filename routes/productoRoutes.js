@@ -3,18 +3,18 @@ const router = express.Router();
 const productoController = require('../controllers/productoController');
 
 // Create a new product
-router.post('/', productoController.createProducto);
+router.post('/crear', productoController.crearProducto);
 
 // Get all products
-router.get('/', productoController.getAllProductos);
+router.get('/obtener', productoController.obtenerTodosProductos);
 
 // Get a single product by ID
-router.get('/:id', productoController.getProductoById);
+router.get('/obtener/:id', productoController.obtenerProductoPorId);
 
 // Update a product by ID
-router.put('/:id', productoController.updateProducto);
+router.put('/actualizar/:id', productoController.actualizarProducto);
 
 // Delete a product by ID
-router.delete('/:id', productoController.deleteProducto);
+router.delete('/eliminar/:id', productoController.eliminarProducto);
 
 module.exports = router;

@@ -6,13 +6,18 @@ const cors = require("cors");
 const connectDB = require('./db');
 const app = express();
 
+// Importar y configurar Cloudinary (¡NUEVA LÍNEA CLAVE!)
+require('./config/cloudinary'); // Asumiendo que config/cloudinary.js exporta la configuración directamente o solo la ejecuta
+
 const modeloRoutes = require('./routes/modeloRoutes');
 const disenoRoutes = require('./routes/disenoRoutes');
 const telaRoutes = require('./routes/telaRoutes');
 const almacenRoutes = require('./routes/almacenRoutes');
 const tallaRoutes = require('./routes/tallaRoutes');
-
+const productoRoutes = require('./routes/productoRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
+
+const uploadRoutes = require('./helpers/upload');
 
 
 
@@ -43,8 +48,9 @@ app.use('/api/diseno', disenoRoutes);
 app.use('/api/tela', telaRoutes);
 app.use('/api/almacen', almacenRoutes);
 app.use('/api/talla', tallaRoutes);
-
+app.use('/api/producto', productoRoutes); // Asegúrate de tener el archivo productoRoutes.js
 app.use('/api/categoria', categoriaRoutes);
+app.use('/api', uploadRoutes);
 
 
 
