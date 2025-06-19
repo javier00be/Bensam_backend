@@ -1,7 +1,8 @@
 const Almacen = require('../models/almacenModel');
+const Talla = require('../models/tallaModel');
 
 // Create a new Almacen
-async function createAlmacen (req, res) {
+async function createAlmacen(req, res) {
   console.log('--- Inicio de la función createAlmacen ---');
   console.log('Cuerpo de la solicitud (req.body):', req.body); // Para ver los datos que llegan del frontend
 
@@ -12,8 +13,23 @@ async function createAlmacen (req, res) {
       return res.status(400).json({ message: 'El cuerpo de la solicitud no puede estar vacío.' });
     }
 
-    console.log('Creando nueva instancia de Almacen con:', req.body);
-    const newAlmacen = new Almacen(req.body);
+    // Transformar las tallas de string a solo talla
+    const tallasPromises = req.body.tallas.map(async (tallaObj) => {
+      return {
+        talla: tallaObj.talla,
+        cantidad: tallaObj.cantidad
+      };
+    });
+
+    const tallas = await Promise.all(tallasPromises);
+
+    const almacenData = {
+      ...req.body,
+      tallas: tallas
+    };
+
+    console.log('Creando nueva instancia de Almacen con:', almacenData);
+    const newAlmacen = new Almacen(almacenData);
 
     console.log('Intentando guardar el nuevo Almacen en la base de datos...');
     const savedAlmacen = await newAlmacen.save();
@@ -50,13 +66,23 @@ async function getAllAlmacenes (req, res) {
 };
 
 // Get a single Almacen by ID
-async function getAlmacenById (req, res) {
+async function getAlmacenById(req, res) {
   try {
-    const almacen = await Almacen.findById(req.params.id);
+    const almacen = await Almacen.findById(req.params.id).populate('tallas.talla');
     if (!almacen) {
       return res.status(404).json({ message: 'Almacen not found' });
     }
-    res.status(200).json(almacen);
+
+    // Modificar la respuesta para incluir el valor de la talla en lugar del ID
+    const modifiedAlmacen = {
+      ...almacen.toObject(),
+      tallas: almacen.tallas.map(tallaObj => ({
+        talla: tallaObj.talla.talla, // Acceder al valor de la talla
+        cantidad: tallaObj.cantidad
+      }))
+    };
+
+    res.status(200).json(modifiedAlmacen);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

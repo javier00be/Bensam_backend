@@ -16,6 +16,7 @@ const almacenRoutes = require('./routes/almacenRoutes');
 const tallaRoutes = require('./routes/tallaRoutes');
 const productoRoutes = require('./routes/productoRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
+const descuentoRoutes = require('./routes/descuentoRoutes');
 
 const uploadRoutes = require('./helpers/upload');
 
@@ -50,6 +51,7 @@ app.use('/api/almacen', almacenRoutes);
 app.use('/api/talla', tallaRoutes);
 app.use('/api/producto', productoRoutes); // Asegúrate de tener el archivo productoRoutes.js
 app.use('/api/categoria', categoriaRoutes);
+app.use('/api/descuento', descuentoRoutes);
 app.use('/api', uploadRoutes);
 
 

@@ -1,7 +1,7 @@
 // Current strict mode is probably handled by Mongoose itself, no need for 'use strict';
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema; // Or use const { Schema } = mongoose;
-const TallaSchema = require('./tallaModel').schema;
+const Talla = require('./tallaModel');
 
 const AlmacenSchema = new Schema({
     modelo: {
@@ -23,10 +23,18 @@ const AlmacenSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    tallas: {
-        type: [TallaSchema], // Correctly referencing the subdocument schema
-        default: []
-    },
+    tallas: [{
+      talla: {
+        type: String,
+        required: true
+      },
+      cantidad: {
+        type: Number,
+        required: true,
+        min: 0,
+        default: 0
+      }
+    }],
     ultimaActualizacion: {
         type: Date,
         default: Date.now
